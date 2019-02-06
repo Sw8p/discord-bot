@@ -1,7 +1,6 @@
 const Discord = require('discord.js');
 
 const config = require('./config.json');
-// const arguments = require('./arguments.js');
 
 const client = new Discord.Client();
 

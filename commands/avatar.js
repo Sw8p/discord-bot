@@ -1,6 +1,8 @@
 module.exports = {
 	name: 'avatar',
+	aliases: ['icon', 'pfp'], // php => ProFile Picture
 	description: 'Get the avatar URL of tagged user.s or your own',
+	cooldown: 10,
 	execute(message, args) {
 		const { users } = message.mentions;
 

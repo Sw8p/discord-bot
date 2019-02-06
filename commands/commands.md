@@ -27,10 +27,12 @@ _-by the readdir function from the **FileSystem** module of nodeJs-_
 - usage
   required arguments and if many their orders
 
-#### Some other usefull keys :
+#### Some other additional features :
 
 - guildOnly
   _not available outside of servers_
 - cooldown
   time in second to wait before using again this command _prevent Spam_
   The control is provided by the cooldowns Collection
+- aliases
+  an array of alias command

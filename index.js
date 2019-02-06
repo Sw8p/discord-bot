@@ -42,13 +42,19 @@ client.on('message', message => {
 	const commandName = args.shift().toLowerCase();
 	// console.log(`commandName: ${commandName}\nargs: ${args}`);
 
-	if (!client.commands.has(commandName)) {
+	const command =
+		client.commands.get(commandName) ||
+		client.commands.find(
+			cmd => cmd.aliases && cmd.aliases.includes(commandName)
+		);
+
+	if (!command) {
+		// TODO: use brainjs to get some user mistake on command
+		// and use it to purpose the probably good command ...
 		message.channel.send(`Sorry Master ... 🦑 \n
-			I don't understand the command \`${commandName}\``);
+				I don't understand the command \`${commandName}\``);
 		return;
 	}
-
-	const command = client.commands.get(commandName);
 
 	if (command.guildOnly && message.channel.type !== 'text') {
 		return message.reply(

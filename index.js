@@ -5,6 +5,7 @@ const { prefix, token, ood } = require('./config.json');
 
 const client = new Discord.Client();
 client.commands = new Discord.Collection();
+const cooldowns = new Discord.Collection();
 
 const commandFiles = fs
 	.readdirSync('./commands')
@@ -39,7 +40,7 @@ client.on('message', message => {
 
 	const args = message.content.slice(prefix.length).split(/ +/);
 	const commandName = args.shift().toLowerCase();
-	console.log(`commandName: ${commandName}\nargs: ${args}`);
+	// console.log(`commandName: ${commandName}\nargs: ${args}`);
 
 	if (!client.commands.has(commandName)) {
 		message.channel.send(`Sorry Master ... 🦑 \n
@@ -63,6 +64,36 @@ client.on('message', message => {
 		}
 		return message.channel.send(reply);
 	}
+
+	// Add cooldown control to prevent user spam
+	// Cooldown is Collection of collection using command name, userId and Date to determine right to reuse command
+	// {commandName: {UserID: UsedDate}}
+	// Cooldown can be specify on the command Map or is set to 3' by default
+	if (!cooldowns.has(command.name)) {
+		cooldowns.set(command.name, new Discord.Collection());
+	}
+
+	const now = Date.now();
+	const timestamps = cooldowns.get(command.name);
+	const cooldownAmount = (command.cooldown || 3) * 1000;
+
+	if (timestamps.has(message.author.id)) {
+		const expirationTime = timestamps.get(message.author.id) + cooldownAmount;
+
+		if (now < expirationTime) {
+			const timeLeft = (expirationTime - now) / 1000;
+			return message.reply(
+				`Power is not absolut ...\nWait ${timeLeft.toFixed(
+					1
+				)} second.s before reusing \`${prefix}${command.name}\``
+			);
+		} else {
+			timestamps.delete(message.author.id);
+		}
+	}
+
+	timestamps.set(message.author.id, now);
+	// console.log('cooldowns : ', cooldowns);
 
 	try {
 		command.execute(message, args);

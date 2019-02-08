@@ -18,9 +18,24 @@ module.exports = {
 			});
 		}
 		const { user, role } = userRole;
-		console.log('userRole: ', userRole);
+		const { members } = message.channel.guild;
+		let tagUser;
+		members.forEach((member, key) => {
+			console.log(member.user.tag, member.user.username, member.user.id);
+			if (user.includes(key)) {
+				tagUser = user;
+			} else if (user === member.user.username) {
+				tagUser = `<@${member.user.id}>`;
+			}
+		});
 
-		//// TODO: check if user!
-		message.channel.send(`You give to @${user} the role of ${role}`);
+		if (tagUser) {
+			message.channel.send(`You give to ${tagUser} the role of ${role}`);
+		} else {
+			message.reply(
+				`${user} does not exist ... \nBut don't worry, we belive ... 👽`
+			);
+		}
+		// TODO: give a real harmless role to the user ...
 	},
 };
